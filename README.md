@@ -1,12 +1,23 @@
-# React + Vite
+# 🚀 Chat-App
+Chat-App là một ứng dụng nhắn tin **thời gian thực**, được xây dựng bằng **ReactJS** và **Firebase**. Ứng dụng cho phép người dùng đăng nhập, gửi tin nhắn, hiển thị avatar và hỗ trợ nhiều tính năng chat hiện đại.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## 🔥 **Tính năng chính**
+✅ Đăng nhập bằng Google  
+✅ Nhắn tin thời gian thực  
+✅ Hiển thị avatar và tên người dùng  
+✅ Giao diện thân thiện, dễ sử dụng  
+✅ Hỗ trợ nhiều thiết bị  
 
-Currently, two official plugins are available:
+## 🛠 **Công nghệ sử dụng**
+- **Frontend**: [ReactJS](https://reactjs.org/) + Vite
+- **Backend & Database**: [Firebase Firestore](https://firebase.google.com/)
+- **Authentication**: Firebase Authentication
+- **UI Framework**: Material-UI (MUI)
+- **Realtime Database**: Firebase Firestore  
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 **Cài đặt & Chạy ứng dụng**
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+### 1️⃣ **Clone Repository**
+```bash
+git clone https://github.com/DamLe1704/Chat-app.git
+cd Chat-app
