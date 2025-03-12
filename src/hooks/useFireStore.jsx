@@ -1,5 +1,5 @@
-import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs } from "firebase/firestore";
+import React, { useState, useEffect } from 'react';
+import { collection, query, where, onSnapshot } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 const useFireStore = (collections, condition) => {
@@ -7,31 +7,22 @@ const useFireStore = (collections, condition) => {
 
     useEffect(() => {
         if (!condition || !condition.compareValue || !condition.compareValue.length) {
-            setDocuments([]);
             return;
         }
 
-        const fetchData = async () => {
-            try {
-                // 1. Truy vấn Firestore
-                const roomsRef = collection(db, collections);
-                const q = query(roomsRef, where(condition.fieldName, condition.operator, condition.compareValue));
-                const querySnapshot = await getDocs(q);
+        const collectionRef = collection(db, collections);
+        const q = query(collectionRef, where(condition.fieldName, condition.operator, condition.compareValue));
 
-                // 2. Xử lý dữ liệu nhận được
-                const docs = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
+        const unsubscribe = onSnapshot(q, (snapshot) => {
+            const docs = snapshot.docs.map(doc => ({
+                ...doc.data(),
+                id: doc.id,
+            }));
+            setDocuments(docs);
+        });
 
-                setDocuments(docs);
-            } catch (error) {
-                console.error("Lỗi khi lấy dữ liệu từ Firestore:", error);
-            }
-        };
-
-        fetchData();
-    }, [collections, condition]); // Chạy lại khi `collections` hoặc `condition` thay đổi
+        return () => unsubscribe(); // Cleanup khi component unmount
+    }, [collections, condition]);
 
     return documents;
 };
