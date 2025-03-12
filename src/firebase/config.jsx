@@ -1,6 +1,6 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, FacebookAuthProvider, GoogleAuthProvider } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getAuth, connectAuthEmulator, FacebookAuthProvider, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore, connectFirestoreEmulator } from "firebase/firestore";
 import { getAnalytics } from "firebase/analytics";
 
 // Cấu hình Firebase
@@ -20,6 +20,12 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
-const facebookProvider = new FacebookAuthProvider(); 
+const facebookProvider = new FacebookAuthProvider();
 
-export { auth, db, analytics, facebookProvider, googleProvider }; 
+// Kết nối Firestore & Auth với Emulator khi chạy local
+if (window.location.hostname === "localhost") {
+  connectFirestoreEmulator(db, "localhost", 8080);  // Firestore chạy trên cổng 8080
+  connectAuthEmulator(auth, "http://localhost:9099"); // Auth Emulator chạy trên cổng 9099
+}
+
+export { auth, db, analytics, facebookProvider, googleProvider };
