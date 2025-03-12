@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Modal, Form, Input, Button, message } from "antd";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../../firebase/config";
@@ -7,30 +7,23 @@ import { AuthContext } from '../../context/AuthProvider';
 const AddRoomModal = ({ open, handleCancel }) => {
     const [form] = Form.useForm();
     const { user } = useContext(AuthContext);
-    const [loading, setLoading] = useState(false);
 
     const handleAddRoom = async () => {
         try {
-            const values = await form.validateFields(); // Kiểm tra form hợp lệ trước khi gửi
-
-            setLoading(true); // Bật trạng thái loading
-
+            const values = await form.validateFields(); 
             await addDoc(collection(db, "rooms"), {
                 name: values.name,
                 description: values.description || "",
                 createdAt: new Date(),
-                members: [user.uid] // Thêm người tạo phòng vào danh sách thành viên
-            });
+                members: [user.uid]
+            })
 
             message.success("Thêm phòng thành công!");
             form.resetFields();
             handleCancel();
         } catch (error) {
-            console.error("Lỗi khi thêm phòng:", error);
             message.error("Không thể thêm phòng. Vui lòng thử lại!");
-        } finally {
-            setLoading(false); // Tắt trạng thái loading
-        }
+        } 
     };
 
     return (
@@ -39,10 +32,10 @@ const AddRoomModal = ({ open, handleCancel }) => {
             open={open}
             onCancel={handleCancel}
             footer={[
-                <Button key="cancel" onClick={handleCancel} disabled={loading}>
+                <Button key="cancel" onClick={handleCancel}>
                     Hủy
                 </Button>,
-                <Button key="submit" type="primary" onClick={handleAddRoom} loading={loading}>
+                <Button key="submit" type="primary" onClick={handleAddRoom}>
                     Thêm phòng
                 </Button>,
             ]}
