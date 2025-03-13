@@ -1,7 +1,7 @@
-    import React from 'react';
-    import { List, Typography, Button } from 'antd';
-    import { MessageOutlined, PlusOutlined } from '@ant-design/icons';
-    import AddRoomModal from '../modals/addRoomModal';
+import React from 'react';
+import { List, Typography, Button } from 'antd';
+import { MessageOutlined, PlusOutlined } from '@ant-design/icons';
+import AddRoomModal from '../modals/addRoomModal';
 import { RoomContext } from '../../context/AppProvider';
 
     const { Title } = Typography;
