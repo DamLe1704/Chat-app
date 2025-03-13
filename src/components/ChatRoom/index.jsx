@@ -5,8 +5,8 @@ import { Layout } from 'antd'
 const ChatRoom = () => {
     return(
         <Layout style={{ height: "100vh" }}>
-            <Sidebar/>
-            <ChatWindow/>
+            <Sidebar />
+            <ChatWindow />
         </Layout>
     )
 }

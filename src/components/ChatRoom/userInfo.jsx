@@ -3,14 +3,16 @@ import { Avatar, Button, Typography } from 'antd';
 import { LogoutOutlined } from '@ant-design/icons';
 import { AuthContext } from '../../context/AuthProvider';
 import { auth } from '../../firebase/config';
+import { RoomContext } from '../../context/AppProvider';
 
 const { Title } = Typography;
 
 const UserInfo = () => {
     const { user } = useContext(AuthContext);
-
+    const { setSelectedRoom } = useContext(RoomContext);
     const handleLogout = () => {
         auth.signOut();
+        setSelectedRoom(null);
     };
 
     return (

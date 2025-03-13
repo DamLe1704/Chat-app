@@ -26,13 +26,18 @@ const AddRoomModal = ({ open, handleCancel }) => {
         } 
     };
 
+    const handleCancelModal = () => {
+        form.resetFields(); 
+        handleCancel();
+    };
+
     return (
         <Modal
             title="Thêm phòng mới"
             open={open}
-            onCancel={handleCancel}
+            onCancel={handleCancelModal}
             footer={[
-                <Button key="cancel" onClick={handleCancel}>
+                <Button key="cancel" onClick={handleCancelModal}>
                     Hủy
                 </Button>,
                 <Button key="submit" type="primary" onClick={handleAddRoom}>

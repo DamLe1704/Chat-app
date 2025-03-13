@@ -9,7 +9,7 @@ const Sidebar = () => {
     return(
         <Sider width={400} style={{ background: "#f0f2f5", padding: "16px" }}>
             <UserInfo/>
-            <ChatList/>
+            <ChatList />
         </Sider>    
     )
 }
