@@ -1,30 +1,29 @@
-import React, { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase/config";
+    import React, { useState, useEffect } from 'react';
+    import { collection, query, where, onSnapshot } from "firebase/firestore";
+    import { db } from "../firebase/config";
 
-const useFireStore = (collections, condition) => {
-    const [documents, setDocuments] = useState([]);
+    const useFireStore = (collections, condition) => {
+        const [documents, setDocuments] = useState([]);
 
-    useEffect(() => {
-        if (!condition || !condition.compareValue || !condition.compareValue.length) {
-            return;
-        }
+        useEffect(() => {
+            if (!condition || !condition.compareValue || !condition.compareValue.length > 0) {
+                return;
+            }
 
-        const collectionRef = collection(db, collections);
-        const q = query(collectionRef, where(condition.fieldName, condition.operator, condition.compareValue));
+            const collectionRef = collection(db, collections);
+            const q = query(collectionRef, where(condition.fieldName, condition.operator, condition.compareValue));
+            const unsubscribe = onSnapshot(q, (snapshot) => {
+                const docs = snapshot.docs.map(doc => ({
+                    ...doc.data(),
+                    id: doc.id,
+                }));
+                setDocuments(docs);
+            });
 
-        const unsubscribe = onSnapshot(q, (snapshot) => {
-            const docs = snapshot.docs.map(doc => ({
-                ...doc.data(),
-                id: doc.id,
-            }));
-            setDocuments(docs);
-        });
+            return () => unsubscribe();
+        }, [collections, condition]);
 
-        return () => unsubscribe(); // Cleanup khi component unmount
-    }, [collections, condition]);
+        return documents;
+    };
 
-    return documents;
-};
-
-export default useFireStore;
+    export default useFireStore;

@@ -15,6 +15,7 @@ const AddRoomModal = ({ open, handleCancel }) => {
                 name: values.name,
                 description: values.description || "",
                 createdAt: new Date(),
+                photoURL: user.photoURL,
                 members: [user.uid]
             })
 

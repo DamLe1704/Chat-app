@@ -1,29 +1,91 @@
-import React from 'react';
-import {Input, Button, Typography, Avatar} from 'antd'
+import React, { useEffect, useState, useContext, useRef } from 'react';
+import { Input, Button, Typography, Avatar, Form } from 'antd';
+import { RoomContext } from '../../context/AppProvider';
+import { addDoc, collection, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { db } from '../../firebase/config';
+import { AuthContext } from '../../context/AuthProvider';
 
 const { Text } = Typography;
 
-const Message = ({text, displayName, createdAt, photoURL}) => {
-    return(
-        <>
-            <div style={{ height: "400px", overflowY: "auto", padding: "10px", border: "1px solid #ddd", display: 'flex', flexDirection: 'column', justifyContent:'flex-end' }}>
-                <div style={{ marginBottom: "10px" }}>
-                    <Avatar src={photoURL}>A</Avatar>
-                    <Text style={{marginLeft:'6px'}} strong>{displayName}</Text>
-                    <Text style={{marginLeft:'10px'}}>{createdAt}</Text>
-                </div>
-                <div style={{ marginLeft: "30px" }}>
-                    <Text>{text}</Text>
-                </div>
-            </div>
+const MessageList = () => {
+    const [newMessage, setNewMessage] = useState("");
+    const [messages, setMessages] = useState([]); 
+    const { user } = useContext(AuthContext);
+    const { selectedRoom } = useContext(RoomContext);
+    const messagesEndRef = useRef(null);
 
-            <div style={{ marginTop: "10px", display: 'flex', justifyContent: 'space-between' }}>
-                <Input  placeholder="Nhập tin nhắn..." />
-                <Button style={{marginLeft:'10px'}} type="primary">
-                Gửi
-                </Button>
+    useEffect(() => {
+        if (!selectedRoom?.id) return;
+
+        const messagesRef = collection(db, "messages");
+        const q = query(messagesRef, where("roomId", "==", selectedRoom.id), orderBy("createdAt", "asc"));
+
+        const unsubscribe = onSnapshot(q, (querySnapshot) => {
+            const newMessages = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setMessages(newMessages);
+        });
+
+        return () => unsubscribe();
+    }, [selectedRoom]);
+
+    useEffect(() => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    const sendMessage = async () => {
+        if (!newMessage.trim()) return;
+
+        try {
+            await addDoc(collection(db, "messages"), {
+                text: newMessage,
+                roomId: selectedRoom.id,
+                displayName: user?.displayName || "Ẩn danh",
+                photoURL: user?.photoURL || "",
+                createdAt: serverTimestamp(),
+            });
+            setNewMessage("");
+        } catch (error) {
+            console.error("Lỗi khi gửi tin nhắn:", error);
+        }
+    };
+
+    return (
+        <>
+            <div style={{ height: "400px", overflowY: "auto", padding: "10px", border: "1px solid #ddd", display: 'flex', flexDirection: 'column' }}>
+                {messages.map((msg) => (
+                    <div key={msg.id} style={{ marginBottom: "10px" }}>
+                        <div style={{ display: "flex", alignItems: "center" }}>
+                            <Avatar src={msg.photoURL || undefined}>{msg.displayName?.charAt(0)}</Avatar>
+                            <Text strong style={{ marginLeft: "6px" }}>{msg.displayName}</Text>
+                            <Text style={{ marginLeft: "10px", fontSize: "12px", color: "gray" }}>
+                                {msg.createdAt?.seconds ? new Date(msg.createdAt.seconds * 1000).toLocaleTimeString("vi-VN") : ""}
+                            </Text>
+                        </div>
+                        <div style={{ marginLeft: "40px", padding: "5px 10px", background: "#f1f1f1", borderRadius: "8px", display: "inline-block" }}>
+                            <Text>{msg.text}</Text>
+                        </div>
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
             </div>
+            <Form style={{ marginTop: "10px", display: 'flex', justifyContent: 'space-between' }}>
+                <Form.Item style={{ flex: 1, marginBottom: 0 }}>
+                    <Input 
+                        placeholder="Nhập tin nhắn..."
+                        value={newMessage}
+                        onChange={(e) => setNewMessage(e.target.value)}
+                        onPressEnter={sendMessage} 
+                    />
+                </Form.Item>
+                <Form.Item style={{ marginBottom: 0, marginLeft: '10px' }}>
+                    <Button type="primary" onClick={sendMessage}>Gửi</Button>
+                </Form.Item>
+            </Form>
         </>
-    )
-}
-export default Message;
+    );
+};
+
+export default MessageList;

@@ -1,8 +1,8 @@
 import React from "react";
 import { Layout, Typography } from "antd";
 import HeaderContent from "./headerContent";
-import Message from "./message";
 import { RoomContext } from "../../context/AppProvider";
+import MessageList from "./message";
 const { Content } = Layout;
 const { Title } = Typography;
 const ChatWindow = () => {
@@ -21,7 +21,7 @@ const ChatWindow = () => {
         <Layout>
             <Content style={{ padding: "20px", background: "#fff" }}>
                 <HeaderContent room={selectedRoom} />
-                <Message text={'A'} displayName={'Đảm'} createdAt={22211} photoURL={null} />
+                <MessageList />
             </Content>
         </Layout>
     )
