@@ -24,7 +24,7 @@ const MessageList = () => {
     const fetchedMessages = useFireStore('messages', condition);
     useEffect(() => {
         setMessages(fetchedMessages);
-    }, [selectedRoom, fetchedMessages]); 
+    }, [fetchedMessages]); 
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -66,13 +66,12 @@ const MessageList = () => {
                 ))}
                 <div ref={messagesEndRef} />
             </div>
-            <Form style={{ marginTop: "10px", display: 'flex', justifyContent: 'space-between' }}>
+            <Form style={{ marginTop: "10px", display: 'flex', justifyContent: 'space-between' }} onFinish={sendMessage}>
                 <Form.Item style={{ flex: 1, marginBottom: 0 }}>
                     <Input 
                         placeholder="Nhập tin nhắn..."
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
-                        onPressEnter={sendMessage} 
                     />
                 </Form.Item>
                 <Form.Item style={{ marginBottom: 0, marginLeft: '10px' }}>

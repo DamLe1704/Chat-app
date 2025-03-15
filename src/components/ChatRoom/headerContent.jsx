@@ -8,7 +8,6 @@ const HeaderContent = ({ room }) => {
     const [open, setOpen] = React.useState(false);
     const { allUsers } = React.useContext(RoomContext);
     const [members, setMembers] = React.useState([]);
-    console.log(room)
     React.useEffect(() => {
         const fetchMembers = async () => {
             if (!room?.members?.length) return;
