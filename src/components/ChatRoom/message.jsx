@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { Input, Button, Typography, Avatar, Form } from 'antd';
 import { RoomContext } from '../../context/AppProvider';
-import { addDoc, collection, query, where, orderBy, onSnapshot, serverTimestamp } from "firebase/firestore";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { db } from '../../firebase/config';
 import { AuthContext } from '../../context/AuthProvider';
+import useFireStore from '../../hooks/useFireStore';
 
 const { Text } = Typography;
 
@@ -14,22 +15,16 @@ const MessageList = () => {
     const { selectedRoom } = useContext(RoomContext);
     const messagesEndRef = useRef(null);
 
+    const condition = React.useMemo(() => ({
+        fieldName: 'roomId',
+        operator: '==',
+        compareValue: selectedRoom.id
+    }), [selectedRoom.id])
+
+    const fetchedMessages = useFireStore('messages', condition);
     useEffect(() => {
-        if (!selectedRoom?.id) return;
-
-        const messagesRef = collection(db, "messages");
-        const q = query(messagesRef, where("roomId", "==", selectedRoom.id), orderBy("createdAt", "asc"));
-
-        const unsubscribe = onSnapshot(q, (querySnapshot) => {
-            const newMessages = querySnapshot.docs.map((doc) => ({
-                id: doc.id,
-                ...doc.data(),
-            }));
-            setMessages(newMessages);
-        });
-
-        return () => unsubscribe();
-    }, [selectedRoom]);
+        setMessages(fetchedMessages);
+    }, [selectedRoom, fetchedMessages]); 
 
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });

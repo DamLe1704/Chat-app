@@ -5,28 +5,27 @@ import AddMemberModal from '../modals/addMemberModal';
 import { RoomContext } from '../../context/AppProvider';
 const { Title } = Typography;
 const HeaderContent = ({ room }) => {
-    const [open, setOpen] = React.useState(false)
+    const [open, setOpen] = React.useState(false);
     const { allUsers } = React.useContext(RoomContext);
     const [members, setMembers] = React.useState([]);
-
+    console.log(room)
     React.useEffect(() => {
         const fetchMembers = async () => {
             if (!room?.members?.length) return;
             
-            const roomMembers = allUsers
-            .filter(user => room.members.includes(user.id))
-            .map(member => ({
-                photoURL: member.photoURL,
-                label: member.displayName
-            }));
-
-            setMembers(roomMembers);
-
+            setMembers(
+                allUsers
+                    .filter(user => room.members.includes(user.id))
+                    .map(member => ({
+                        photoURL: member.photoURL,
+                        label: member.displayName
+                    }))
+            );
         };
-
+    
         fetchMembers();
-    }, [room, allUsers, room.members]);
-
+    }, [room, allUsers]);
+    
     const handleOpenModal = () => {
         setOpen(true)
     }
