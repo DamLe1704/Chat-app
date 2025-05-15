@@ -7,7 +7,6 @@ import { AuthContext } from '../../context/AuthProvider';
 const AddRoomModal = ({ open, handleCancel }) => {
     const [form] = Form.useForm();
     const { user } = useContext(AuthContext);
-
     const handleAddRoom = async () => {
         try {
             const values = await form.validateFields(); 
